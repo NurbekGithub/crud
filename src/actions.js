@@ -1,4 +1,4 @@
-import { SET_GAMES, SAVE_GAME } from './actions/action-types';
+import { SET_GAMES, ADD_GAME } from './actions/action-types';
 
 export function setGames(games) {
   return {
@@ -25,6 +25,13 @@ export function fetchGames() {
   }
 }
 
+export function addGame(game) {
+  return {
+    type: ADD_GAME,
+    game
+  }
+}
+
 export function saveGame(data) {
   return dispatch => {
     return fetch('/api/gamesreq', {
@@ -34,5 +41,6 @@ export function saveGame(data) {
         "Content-Type": "application/json"
       }
     }).then(handleResponse)
+      .then(data => dispatch(addGame(data.game)));
   }
 }

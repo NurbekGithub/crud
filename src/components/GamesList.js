@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import GameCard from './GameCard';
 
 const GamesList = ({ games }) => {
 
@@ -9,14 +10,12 @@ const GamesList = ({ games }) => {
 
   const renderGames = (game, idx) => {
     return (
-      <li key={idx}>
-        {game.title} 
-      </li>
+      <GameCard key={idx} game={game}/>
     )
   }
   
   const gameList = (
-    <p> {games.map(renderGames)} </p>
+    <ul className='ui four cards'> {games.map(renderGames)} </ul>
   )
 
 
