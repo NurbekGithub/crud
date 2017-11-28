@@ -1,9 +1,16 @@
-import { SET_GAMES, ADD_GAME } from './actions/action-types';
+import { SET_GAMES, ADD_GAME, GAME_FETCHED } from './actions/action-types';
 
 export function setGames(games) {
   return {
     type: SET_GAMES,
     games
+  }
+}
+
+export function gameFetched(game) {
+  return {
+    type: GAME_FETCHED,
+    game
   }
 }
 
@@ -20,8 +27,16 @@ function handleResponse(response) {
 export function fetchGames() {
   return dispatch => {
     fetch('api/gamesreq')
+    .then(res => res.json())
+    .then(json => dispatch(setGames(json.games)));
+  }
+}
+
+export function fetchGame(id) {
+  return dispatch => {
+    fetch(`/api/gamesreq/${id}`)
       .then(res => res.json())
-      .then(json => dispatch(setGames(json.games)));
+      .then(data => dispatch(gameFetched(data.game)));
   }
 }
 

@@ -37,6 +37,12 @@ mongodb.MongoClient.connect(dbUrl, function(err, db) {
     }
   })
 
+  app.get('/api/gamesreq/:id', (req, res) => {
+    db.collection('games').findOne({ _id: new mongodb.ObjectId(req.params.id)}, (err, game) => {
+      res.json({ game });
+    });
+  });
+
   app.use((req, res) => {
     res.status(404).json({
       errors: {
