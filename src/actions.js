@@ -1,4 +1,4 @@
-import { SET_GAMES, ADD_GAME, GAME_FETCHED } from './actions/action-types';
+import { SET_GAMES, ADD_GAME, GAME_FETCHED, GAME_UPDATED, GAME_DELETED } from './actions/action-types';
 
 export function setGames(games) {
   return {
@@ -11,6 +11,20 @@ export function gameFetched(game) {
   return {
     type: GAME_FETCHED,
     game
+  }
+}
+
+export function gameUpdated(game) {
+  return {
+    type: GAME_UPDATED,
+    game
+  }
+}
+
+export function gameDeleted(id) {
+  return {
+    type: GAME_DELETED,
+    id
   }
 }
 
@@ -57,5 +71,30 @@ export function saveGame(data) {
       }
     }).then(handleResponse)
       .then(data => dispatch(addGame(data.game)));
+  }
+}
+
+export function updateGame(data) {
+  return dispatch => {
+    return fetch(`/api/gamesreq/${data._id}`, {
+      method: 'put',
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(handleResponse)
+      .then(data => dispatch(gameUpdated(data.game)));
+  }
+}
+
+export function deleteGame(id) {
+  return dispatch => {
+    return fetch(`/api/gamesreq/${id}`, {
+      method: 'delete',
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(handleResponse)
+      .then(data => dispatch(gameDeleted(id)));
   }
 }

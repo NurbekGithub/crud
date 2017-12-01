@@ -1,8 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { saveGame, fetchGame } from '../actions';
-import { Redirect } from 'react-router-dom';
 
 class GameForm extends React.Component {
 
@@ -14,8 +11,7 @@ class GameForm extends React.Component {
       title: this.props.game ? this.props.game.title : '',
       cover: this.props.game ? this.props.game.cover : '',
       errors: {},
-      loading: false,
-      done: false
+      loading: false
     }
   }
 
@@ -27,11 +23,6 @@ class GameForm extends React.Component {
     });
   }
 
-  componentDidMount = () => {
-    if(this.props.match.params._id) {
-      this.props.fetchGame(this.props.match.params._id)
-    }
-  }
 
   handleChange = (e) => {
     if(!!this.state.errors) { 
@@ -57,13 +48,10 @@ class GameForm extends React.Component {
     const isValid = Object.keys(errors).length === 0;
 
     if(isValid) {
-      const { title, cover } = this.state;
+      const { _id, title, cover } = this.state;
       this.setState({ loading: true });
-      this.props.saveGame({ title, cover })
-        .then(
-          () => { this.setState({ done: true })},
-          (err) => err.response.json().then(({errors}) => this.setState({ errors, loading: false }))
-        )
+      this.props.saveGame({ _id, title, cover })
+        .catch((err) => err.response.json().then(({ errors }) => this.setState({ errors, loading: false})));
     }
   }
 
@@ -90,13 +78,14 @@ class GameForm extends React.Component {
             name='cover'
             id='cover' 
             value={this.state.cover}
+            placeholder='http://lorempixel.com/400/200/sports'
             onChange={this.handleChange}
           />
           <span>{this.state.errors.cover}</span>
         </div>
 
         <div className='field'>
-          {this.state.cover && <img src={this.state.cover} alt='cover' className='ui small bordered image' />}
+          {this.state.cover && <img src={ this.state.cover } alt='cover' className='ui small bordered image' />}
         </div>
 
         <div className='field'>
@@ -106,20 +95,10 @@ class GameForm extends React.Component {
     )
     return (
       <div> 
-        {this.state.done ? <Redirect to='/games' /> : form }
+        { form }
       </div>
     );
   }
 }
 
-function mapStateToProps(state, props) {
-  if(props.match.params._id) {
-    return {
-      game: state.games.find(item => item._id === props.match.params._id)
-    }
-  }
-
-  return { game: null };
-}
-
-export default connect(mapStateToProps, { saveGame, fetchGame })(GameForm);
+export default GameForm;
